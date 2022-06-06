@@ -1,0 +1,206 @@
+
+//Exercício 1 - Pilha implementada sobre vetores
+
+int retorna_topo(t_pilha*p){
+    return p->dados[p->topo-1];
+}
+
+int hanoi(int numero, t_pilha*p){
+    t_pilha aux;  
+    inicia_pilha(&aux); 
+    if(!esta_vazia(p)){
+        if(retorna_topo(p) >= numero){
+            push(numero, p);
+        }
+        else{
+            while(retorna_topo(p) < numero){
+                push(pop(p), &aux); //coloca o respectivo topo na pilha auxiliar
+            }            
+                push(numero, p); //encaixa o número na lista original   
+            while(!esta_vazia(&aux)){              
+                push(pop(&aux), p); //colocar de volta na lista original
+            }     
+        }   
+    }
+    else
+        push(numero, p);
+}
+
+//MAIN
+#include <time.h>
+#include "pilha_vetor.h"
+
+void teste_hanoi(){
+    t_pilha p1;
+    inicia_pilha (&p1);
+    hanoi(5, &p1);
+    hanoi(3, &p1);
+    hanoi(2, &p1);
+    hanoi(1, &p1);
+    exibe_pilha(&p1);
+    hanoi(6, &p1);
+    exibe_pilha(&p1);
+}
+
+int main () {
+    teste_hanoi();
+    return 0;
+}
+
+//Exercício 1 - Pilha implementada sobre listas ligadas
+
+int retorna_topo(t_pilha*p){
+    return p->topo->info;
+}
+
+int hanoi(int numero, t_pilha*p){
+    t_pilha aux;  
+    inicia_pilha(&aux); 
+    if(!esta_vazia(p)){
+        if(retorna_topo(p) >= numero){
+            push(numero, p);
+        }
+        else{
+            while(!esta_vazia(p) && numero > retorna_topo(p)){
+                push(pop(p), &aux); //coloca o respectivo topo na pilha auxiliar
+            }    
+                push(numero, p); //encaixa o número na lista original   
+            while(!esta_vazia(&aux)){              
+                push(pop(&aux), p); //colocar de volta na caixa
+            }     
+        }   
+    }
+    else
+        push(numero, p);
+}
+
+//MAIN
+#include <time.h>
+#include "pilha_lista.h"
+
+void testa_hanoi(){
+    t_pilha p1;
+    inicia_pilha(&p1);
+    hanoi(4, &p1);
+    hanoi(3, &p1);
+    hanoi(5, &p1);
+    exibe_pilha(&p1);
+    hanoi(2,&p1);
+    exibe_pilha(&p1);
+}
+
+int main(){
+    testa_hanoi();
+    return 0;
+}
+
+//Exercício 2 - Fila - Passa a vez
+
+void passa_vez(t_fila *f){
+    s_no * aux, * aux2, * aux3;
+    if(f->primeiro != f->ultimo){
+        if(!esta_vazia(f)){
+            aux = f->primeiro;// 1º lugar (cópia)
+            aux3 = f->primeiro->proximo->proximo;
+            f->primeiro = f->primeiro->proximo; //2º lugar se torna 1º
+            f->primeiro->proximo = aux; //1º como aux dá a mão pro 1º (anteriomente 2º lugar)
+            aux->proximo = aux3; //2º lugar atual dá a mão para o 3º...
+        }
+    }
+}
+
+//MAIN
+void teste_passa_vez(){
+t_fila f1;
+    inicia_fila(&f1);
+    insere(3, &f1);
+    insere(2, &f1);
+    insere(4, &f1);
+    exibe_fila(&f1);
+    passa_vez(&f1);
+    exibe_fila(&f1);
+}
+int main(){
+    teste_passa_vez();
+    return 0;
+}
+
+//Exercício 3 - Recursividade - busca pelo maior elemento do vetor
+
+//RECURSIVA
+int maximo_rec(int v[], int tam, int aux){
+        if(tam == 0)
+            return v[aux];  
+        else{
+            if(v[tam-1] > v[aux])
+                return maximo_rec(v, tam-1, tam-1);
+                
+            else
+                return maximo_rec(v, tam-1, aux); //cai no else enquanto o 1º indice do vetor for o maior de todos
+    }
+}
+
+void exibe_vetor(int v[], int tam){
+    int i;
+    printf("\n");
+    for (i = 0; i < tam; i++) {  
+        printf ("%d ", v[i]);
+    }
+    
+}
+int main(){
+
+    int tam;
+    printf("Digite o tamanho do vetor: ");
+    scanf("%d", &tam);
+    int i, v[tam];
+
+    for (i = 0; i < tam; i++) {   //Para preencher o vetor
+    printf ("Digite um numero: ");
+    scanf ("%d", &v[i]);
+    }
+    printf("vetor antes da funcao\n\n");
+    exibe_vetor(v, tam);
+    printf("\n\nO maior elemento pela funcao original: %d\n", maximo(v, tam));
+    printf("\n\nO maior elemento buscado pela recursidade: %d\n", maximo_rec(v, tam, 0)); 
+    return 0;
+}
+
+
+//Exercício 4 - Listas Ligadas - Remove os elementos pares de uma lista
+
+s_lista * remove_par(s_lista *l){
+    s_lista * impar;
+    impar = (s_lista *) malloc (sizeof(s_lista)); //alocação da nova lista, para um espaço em memória
+    constroi_lista(impar);
+    int aux;
+    while(!esta_vazia(l)){
+        aux = remove_inicio(l); //remove todas as situações
+        if(aux%2!=0){
+            insere_fim(aux, impar);
+        }
+    }
+return impar;
+}
+
+//MAIN
+void teste_lista_remove_par() {
+    s_lista l;
+    constroi_lista(&l);
+    mostra_lista("lista foi criada", &l);
+
+    insere_inicio (6, &l);
+    insere_inicio (4, &l);
+    insere_inicio (3, &l);
+    insere_inicio (3, &l);
+    mostra_lista ("lista depois das insercoes\n", &l);
+
+    s_lista * impar = remove_par(&l);
+
+    mostra_lista ("lista sem os pares", impar);   
+}
+
+int main () {
+    teste_lista_remove_par();
+    return 0;
+}
